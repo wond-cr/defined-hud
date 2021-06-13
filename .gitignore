@@ -1,9 +1,9 @@
-#Non IDE Residue
+# Non IDE Residue
 .git/
 .DS_Store
 tmp/
 
-#Eclipse
+# Eclipse
 .project
 .classpath
 
@@ -12,13 +12,13 @@ metadata/
 .settings/
 bin/
 
-#IntelliJ
+# IntelliJ
 .idea/
 .idea/*
 *.iml
 out/
 
-#Visual Studio / VS Code
+# Visual Studio / VS Code
 .vs/
 Debug/
 .vscode/
@@ -26,12 +26,12 @@ Debug/
 *.vcxproj
 *.vcxproj*
 
-#Project Specific
+# Project Specific
 lib/
 
 # Maven
 target/
 
-#Checkstyle
+# Checkstyle
 .checkstyle
 /style
