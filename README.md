@@ -1,4 +1,4 @@
-# Defined HUD<sub><sup> · A Minecraft Server Plugin</sup></sub>
+# DefinedHUD<sub><sup> · A Minecraft Server Plugin</sup></sub>
 
 Display player's coordinates and world time on the player's action bar. All the functionality of <a href="https://vanillatweaks.net/picker/datapacks/.">Coordinates HUD</a> and more!
 
