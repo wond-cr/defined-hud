@@ -64,7 +64,7 @@ public class Util {
     public static final String PLAYER_CFG_PATH = "playerConfig";
     public static final String MESSAGE_UPDATE_DELAY_PATH = "messageUpdateDelay";
     public static final String BIOME_UPDATE_DELAY_PATH = "biomeUpdateDelay";
-    public static final String VERSION_PATH = "dhudVersion";
+    public static final String VERSION_PATH = "version";
     public static final String COLOR_PATH = "colors";
 
     public static final String SIGNATURE = Util.SIGN + "[DefinedHUD] " + Util.RES;

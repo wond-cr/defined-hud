@@ -1,4 +1,5 @@
-dhudVersion: '0.1'
+# "version" represents the version of DefinedHUD plugin! This should not be modified normally.
+version: '0.1'
 messageUpdateDelay: 5
 biomeUpdateDelay: 40
 colors:

@@ -4,7 +4,7 @@ description: Displays player's coordinates and world time on an actionbar.
 prefix: ${project.artifactId}
 
 author: RoverIsADog, Lingxi Li
-website: https://github.com/RoverIsADog/InfoHUD
+website: https://github.com/xixi-wonderland/defined-hud
 
 # 1.13 to avoid legacy mode.
 api-version: 1.17
