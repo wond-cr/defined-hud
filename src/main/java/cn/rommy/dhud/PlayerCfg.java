@@ -1,8 +1,8 @@
-package com.roverisadog.infohud;
+package cn.rommy.dhud;
 
-import com.roverisadog.infohud.command.CoordMode;
-import com.roverisadog.infohud.command.DarkMode;
-import com.roverisadog.infohud.command.TimeMode;
+import cn.rommy.dhud.command.CoordMode;
+import cn.rommy.dhud.command.DarkMode;
+import cn.rommy.dhud.command.TimeMode;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public class PlayerCfg {
 
-    //Player management
+    // Player management
     static Map<UUID, PlayerCfg> playerHash;
     protected UUID id;
 
@@ -41,18 +41,18 @@ public class PlayerCfg {
      */
     static boolean savePlayer(Player player) {
         if (isEnabled(player)) {
-            Util.sendMsg(player, Util.HLT + "InfoHUD was already enabled.");
+            Util.sendMsg(player, Util.HLT + "DefinedHUD was already enabled.");
             return true;
         }
-        //Putting default values
+        // Putting default values
         playerHash.put(player.getUniqueId(), new PlayerCfg(player.getUniqueId()));
 
-        //Saves changes
-        InfoHUD.instance.getConfig().set(Util.PLAYER_CFG_PATH + "." + player.getUniqueId().toString(),
+        // Saves changes
+        DefinedHUD.instance.getConfig().set(Util.PLAYER_CFG_PATH + "." + player.getUniqueId().toString(),
                 playerHash.get(player.getUniqueId()).toMap());
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
 
-        Util.sendMsg(player, "InfoHUD is now "
+        Util.sendMsg(player, "DefinedHUD is now "
                 + (isEnabled(player) ? Util.GRN + "enabled" : Util.ERR + "disabled") + Util.RES + ".");
         return true;
     }
@@ -60,17 +60,17 @@ public class PlayerCfg {
     /** Removes player UUID from player list. */
     static boolean removePlayer(Player player) {
         if (!isEnabled(player)) {
-            Util.sendMsg(player, Util.HLT + "InfoHUD was already disabled.");
+            Util.sendMsg(player, Util.HLT + "DefinedHUD was already disabled.");
             return true;
         }
 
         playerHash.remove(player.getUniqueId());
 
-        //Saves changes
-        InfoHUD.instance.getConfig().set(Util.PLAYER_CFG_PATH + "." + player.getUniqueId().toString(), null);
-        InfoHUD.instance.saveConfig();
+        // Saves changes
+        DefinedHUD.instance.getConfig().set(Util.PLAYER_CFG_PATH + "." + player.getUniqueId().toString(), null);
+        DefinedHUD.instance.saveConfig();
 
-        Util.sendMsg(player, "InfoHUD is now "
+        Util.sendMsg(player, "DefinedHUD is now "
                 + (isEnabled(player) ? Util.GRN + "enabled" : Util.ERR + "disabled") + Util.RES + ".");
         return true;
     }
@@ -85,10 +85,10 @@ public class PlayerCfg {
     /** Changes coordinates mode and returns new mode. */
     static String setCoordinatesMode(Player p, CoordMode newMode) {
         playerHash.get(p.getUniqueId()).coordMode = newMode;
-        //Saves changes
-        InfoHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
+        // Saves changes
+        DefinedHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
                 playerHash.get(p.getUniqueId()).toMap());
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
         return "Coordinates display set to: " + Util.HLT + newMode.description + Util.RES + ".";
     }
 
@@ -106,10 +106,10 @@ public class PlayerCfg {
         }
 
         playerHash.get(p.getUniqueId()).timeMode = newMode;
-        //Saves changes
-        InfoHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
+        // Saves changes
+        DefinedHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
                 playerHash.get(p.getUniqueId()).toMap());
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
         return "Time display set to: " + Util.HLT + newMode.description + Util.RES + ".";
     }
 
@@ -124,10 +124,10 @@ public class PlayerCfg {
     static String setDarkMode(Player p, DarkMode newMode) {
         playerHash.get(p.getUniqueId()).darkMode = newMode;
 
-        //Saves changes
-        InfoHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
+        // Saves changes
+        DefinedHUD.instance.getConfig().createSection(Util.PLAYER_CFG_PATH + "." + p.getUniqueId().toString(),
                 playerHash.get(p.getUniqueId()).toMap());
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
         return "Dark mode set to: " + Util.HLT + newMode.description + Util.RES + ".";
     }
 

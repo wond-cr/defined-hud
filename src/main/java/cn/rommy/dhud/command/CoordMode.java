@@ -1,4 +1,4 @@
-package com.roverisadog.infohud.command;
+package cn.rommy.dhud.command;
 
 import org.bukkit.entity.Player;
 

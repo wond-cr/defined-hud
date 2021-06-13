@@ -1,4 +1,4 @@
-package com.roverisadog.infohud.command;
+package cn.rommy.dhud.command;
 
 import java.util.Arrays;
 import java.util.List;

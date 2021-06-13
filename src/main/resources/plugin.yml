@@ -1,28 +1,28 @@
 name: ${project.artifactId}
 version: ${project.version}
-description: Displays coordinates and time in the actionbar.
+description: Displays player's coordinates and world time on an actionbar.
 prefix: ${project.artifactId}
 
-author: RoverIsADog
+author: RoverIsADog, Lingxi Li
 website: https://github.com/RoverIsADog/InfoHUD
 
-#1.13 to avoid legacy mode.
-api-version: 1.13
-#Otherwise NullPointerException
+# 1.13 to avoid legacy mode.
+api-version: 1.17
+# Otherwise NullPointerException
 load: POSTWORLD
-main: com.roverisadog.infohud.InfoHUD
+main: cn.rommy.dhud.DefinedHUD
 
 commands:
-  infohud:
+  hud:
     description: Displays the list of commands and their functions.
-    usage: /infohud help
-    permission: infohud.use
-    permission-message: You do not have the infohud.toggle permission.
+    usage: /hud help
+    permission: hud.use
+    permission-message: You do not have the hud.toggle permission.
 permissions:
-  infohud.use:
-    description: Allows enabling/disabling/configuring InfoHUD.
+  hud.use:
+    description: Allows enabling/disabling/configuring DefinedHUD.
     default: true
-  infohud.admin:
+  hud.admin:
     description: Allows changing the refresh rate and any other future global settings.
     default: false
 

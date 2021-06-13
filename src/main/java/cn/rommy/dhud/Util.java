@@ -1,5 +1,5 @@
 
-package com.roverisadog.infohud;
+package cn.rommy.dhud;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.roverisadog.infohud.command.CoordMode;
-import com.roverisadog.infohud.command.DarkMode;
-import com.roverisadog.infohud.command.TimeMode;
+import cn.rommy.dhud.command.CoordMode;
+import cn.rommy.dhud.command.DarkMode;
+import cn.rommy.dhud.command.TimeMode;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Biome;
@@ -26,9 +26,9 @@ public class Util {
         throw new IllegalArgumentException();
     }
 
-    //Shortcuts
-    public static final String PERM_USE = "infohud.use";
-    public static final String PERM_ADMIN = "infohud.admin";
+    // Permissions
+    public static final String PERM_USE = "hud.use";
+    public static final String PERM_ADMIN = "hud.admin";
 
     public static final String HLT = ChatColor.YELLOW.toString();
     public static final String SIGN = ChatColor.DARK_AQUA.toString();
@@ -40,8 +40,9 @@ public class Util {
     public static final String DAQA = ChatColor.DARK_AQUA.toString();
     public static final String DBLU = ChatColor.DARK_BLUE.toString();
     public static final String GRN = ChatColor.GREEN.toString();
+    public static final String GRY = ChatColor.DARK_GRAY.toString();
 
-    //Colors
+    // Colors
     public static String bright1 = Util.GLD;
     public static String bright2 = Util.WHI;
     public static String dark1 = Util.DBLU;
@@ -55,23 +56,24 @@ public class Util {
     /** Currently loaded biomes considered bright. */
     private static EnumSet<Biome> brightBiomes;
 
-    //Default values
-    static final String CMD_NAME = "infohud";
+    // Command prefix:
+    static final String CMD_NAME = "hud";
 
+    // Default values:
     public static final String BRIGHT_BIOMES_PATH = "brightBiomes";
     public static final String PLAYER_CFG_PATH = "playerConfig";
     public static final String MESSAGE_UPDATE_DELAY_PATH = "messageUpdateDelay";
     public static final String BIOME_UPDATE_DELAY_PATH = "biomeUpdateDelay";
-    public static final String VERSION_PATH = "infohudVersion";
+    public static final String VERSION_PATH = "dhudVersion";
     public static final String COLOR_PATH = "colors";
 
-    public static final String SIGNATURE = Util.SIGN + "[InfoHUD] " + Util.RES;
+    public static final String SIGNATURE = Util.SIGN + "[DefinedHUD] " + Util.RES;
 
     public static final int DEFAULT_MESSAGE_UPDATE_DELAY = 5;
     public static final int DEFAULT_BIOME_UPDATE_DELAY = 40;
 
 
-    //Performance
+    // Performance
     /** Delay between each actionbar message update. */
     private static long messageUpdateDelay;
     /** Delay between each biome detection update. */
@@ -85,24 +87,24 @@ public class Util {
     static boolean loadConfig() {
         try {
 
-            InfoHUD.instance.reloadConfig();
+            DefinedHUD.instance.reloadConfig();
 
-            FileConfiguration file = InfoHUD.instance.getConfig();
+            FileConfiguration file = DefinedHUD.instance.getConfig();
 
-            //Get the message update delay.
+            // Get the message update delay.
             messageUpdateDelay = file.getLong(MESSAGE_UPDATE_DELAY_PATH);
-            //Older versions
+            // Older versions
             if (messageUpdateDelay == 0L) {
                 messageUpdateDelay = DEFAULT_MESSAGE_UPDATE_DELAY;
             }
 
-            //Get the biome update delay.
+            // Get the biome update delay.
             biomeUpdateDelay = file.getLong(BIOME_UPDATE_DELAY_PATH);
             if (biomeUpdateDelay == 0L) {
-                biomeUpdateDelay = DEFAULT_BIOME_UPDATE_DELAY; //Default value.
+                biomeUpdateDelay = DEFAULT_BIOME_UPDATE_DELAY; // Default value.
             }
 
-            //Get colors
+            // Get colors
             try {
                 bright1 = getColor(file.getString(COLOR_PATH + ".bright1")).toString();
                 bright2 = getColor(file.getString(COLOR_PATH + ".bright2")).toString();
@@ -116,27 +118,27 @@ public class Util {
                 dark2 = Util.DAQA;
             }
 
-            //Building player settings hash
-            PlayerCfg.playerHash = new HashMap<>(); //Map<UUID , PlayerConfig>
+            // Building player settings hash
+            PlayerCfg.playerHash = new HashMap<>(); // Map<UUID , PlayerConfig>
 
-            //For every section of "playerCfg" : UUID in string form
+            // For every section of "playerCfg" : UUID in string form
             for (String playerStr : file.getConfigurationSection(PLAYER_CFG_PATH).getKeys(false)) {
 
-                //Get UUID from String
+                // Get UUID from String
                 UUID playerID = UUID.fromString(playerStr);
 
-                //Get raw mapping of the player's settings
+                // Get raw mapping of the player's settings
                 Map<String, Object> playerSettings =
                         file.getConfigurationSection(PLAYER_CFG_PATH + "." + playerStr).getValues(false);
 
-                //Decode into enumerated types.
+                // Decode into enumerated types.
                 PlayerCfg playerCfg = loadPlayerSettings(playerID, playerSettings);
 
-                //Translate into faster mappings
+                // Translate into faster mappings
                 PlayerCfg.playerHash.put(playerID, playerCfg);
             }
 
-            //Loading biomes
+            // Loading biomes
             brightBiomes = EnumSet.noneOf(Biome.class);
             for (String currentBiome : file.getStringList(BRIGHT_BIOMES_PATH)) {
                 try {
@@ -144,7 +146,7 @@ public class Util {
                     brightBiomes.add(bio);
                 }
                 catch (Exception ignored) {
-                    //Biome misspelled, nonexistent, from future or past version.
+                    // Biome misspelled, nonexistent, from future or past version.
                 }
             }
 
@@ -171,14 +173,14 @@ public class Util {
         TimeMode timeMode;
         DarkMode darkMode;
 
-        //Is from a version before InfoHUD 1.2 (Stored as int)
+        // Is from a version before DefinedHUD 1.2 (Stored as int)
         if (map.get(CoordMode.cfgKey) instanceof Integer) {
             isFromOlderVersion = true;
             coordMode = CoordMode.get((int) map.get(CoordMode.cfgKey));
             timeMode = TimeMode.get((int) map.get(TimeMode.cfgKey));
             darkMode = DarkMode.get((int) map.get(DarkMode.cfgKey));
         }
-        //Is from newer versions (stored as String)
+        // Is from newer versions (stored as String)
         else {
             coordMode = CoordMode.get((String) map.get(CoordMode.cfgKey));
             timeMode = TimeMode.get((String) map.get(TimeMode.cfgKey));
@@ -192,34 +194,34 @@ public class Util {
     static void updateConfigFile() {
         String msg = GRN + "Old config file detected: updating...";
 
-        FileConfiguration file = InfoHUD.instance.getConfig();
+        FileConfiguration file = DefinedHUD.instance.getConfig();
 
-        //Saves old data into code.
+        // Saves old data into code.
         List<String> oldBiomeList = file.getStringList(BRIGHT_BIOMES_PATH);
-        messageUpdateDelay = file.getLong("refreshRate"); //Old name
+        messageUpdateDelay = file.getLong("refreshRate"); // Old name
 
-        //Set all config data to null, and save (wipe)
+        // Set all config data to null, and save (wipe)
         for (String key : file.getKeys(false)) {
-            InfoHUD.instance.getConfig().set(key, null);
+            DefinedHUD.instance.getConfig().set(key, null);
         }
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
 
-        //Rewrite old data and save.
-        file.set(VERSION_PATH, InfoHUD.instance.getDescription().getVersion()); //infohudVersion: '1.3'
-        file.set(MESSAGE_UPDATE_DELAY_PATH, messageUpdateDelay); //messageUpdateDelay: 5
-        file.set(BIOME_UPDATE_DELAY_PATH, DEFAULT_BIOME_UPDATE_DELAY); //biomeUpdateDelay: 40
+        // Rewrite old data and save.
+        file.set(VERSION_PATH, DefinedHUD.instance.getDescription().getVersion()); // dhudVersion: '1.3'
+        file.set(MESSAGE_UPDATE_DELAY_PATH, messageUpdateDelay); // messageUpdateDelay: 5
+        file.set(BIOME_UPDATE_DELAY_PATH, DEFAULT_BIOME_UPDATE_DELAY); // biomeUpdateDelay: 40
 
         file.set(COLOR_PATH + ".bright1", ChatColor.GOLD.name());
         file.set(COLOR_PATH + ".bright2", ChatColor.WHITE.name());
         file.set(COLOR_PATH + ".dark1", ChatColor.DARK_BLUE.name());
         file.set(COLOR_PATH + ".dark2", ChatColor.DARK_AQUA.name());
 
-        file.set(BRIGHT_BIOMES_PATH, oldBiomeList); //brightBiomes:
-        for (UUID id : PlayerCfg.playerHash.keySet()) { //playerConfig:
+        file.set(BRIGHT_BIOMES_PATH, oldBiomeList); // brightBiomes:
+        for (UUID id : PlayerCfg.playerHash.keySet()) { // playerConfig:
             file.createSection(PLAYER_CFG_PATH + "." + id.toString(),
                     PlayerCfg.playerHash.get(id).toMap());
         }
-        InfoHUD.instance.saveConfig();
+        DefinedHUD.instance.saveConfig();
 
         msg += " Done";
         printToTerminal(msg);
@@ -230,7 +232,7 @@ public class Util {
      * @param name Name to check.
      * @return Matching color.
      * @throws Exception If no matching color is found.
-     * @see <a href="https://minecraft.gamepedia.com/Formatting_codes">Color codes (ALLCAPS)</a>
+     * @see <a href="https:// minecraft.gamepedia.com/Formatting_codes">Color codes (ALLCAPS)</a>
      */
     private static ChatColor getColor(String name) throws Exception {
         for (ChatColor col : ChatColor.values()) {
@@ -266,19 +268,19 @@ public class Util {
      */
     static String addBrightBiome(Biome b) {
         try {
-            //Already there
+            // Already there
             if (brightBiomes.contains(b)) {
                 return HLT + b.toString() + RES + " is already included in the bright biomes list.";
             }
             else {
-                //Add to set
+                // Add to set
                 brightBiomes.add(b);
-                //Update config.yml. APPEND MODE to not lose biomes from other versions.
+                // Update config.yml. APPEND MODE to not lose biomes from other versions.
                 List<String> biomeList =
-                        new LinkedList<>(InfoHUD.instance.getConfig().getStringList(BRIGHT_BIOMES_PATH));
+                        new LinkedList<>(DefinedHUD.instance.getConfig().getStringList(BRIGHT_BIOMES_PATH));
                 biomeList.add(b.toString());
-                InfoHUD.instance.getConfig().set(BRIGHT_BIOMES_PATH, biomeList);
-                InfoHUD.instance.saveConfig();
+                DefinedHUD.instance.getConfig().set(BRIGHT_BIOMES_PATH, biomeList);
+                DefinedHUD.instance.saveConfig();
                 return GRN + "Added " + HLT + b.toString() + GRN + " to the bright biomes list.";
             }
         } catch (Exception e) {
@@ -293,20 +295,20 @@ public class Util {
      */
     static String removeBrightBiome(Biome b) {
         try {
-            //Contained
+            // Contained
             if (brightBiomes.contains(b)) {
-                //Update config.yml. APPEND MODE to not lose biomes from other versions.
+                // Update config.yml. APPEND MODE to not lose biomes from other versions.
                 List<String> biomeList =
-                        new LinkedList<>(InfoHUD.instance.getConfig().getStringList(BRIGHT_BIOMES_PATH));
+                        new LinkedList<>(DefinedHUD.instance.getConfig().getStringList(BRIGHT_BIOMES_PATH));
                 biomeList.remove(b.toString());
-                InfoHUD.instance.getConfig().set(BRIGHT_BIOMES_PATH, biomeList);
-                InfoHUD.instance.saveConfig();
+                DefinedHUD.instance.getConfig().set(BRIGHT_BIOMES_PATH, biomeList);
+                DefinedHUD.instance.saveConfig();
 
-                //Remove from set
+                // Remove from set
                 brightBiomes.remove(b);
                 return GRN + "Removed " + HLT + b.toString() + GRN + " from the bright biomes list.";
             }
-            //Wasn't included.
+            // Wasn't included.
             else {
                 return HLT + b.toString() + RES + " isn't in the bright biomes list.";
             }
@@ -324,13 +326,13 @@ public class Util {
      *         towards which the player is facing.
      */
     static String getPlayerDirection(Player player) {
-        //-180: Leaning left | +180: Leaning right
+        // -180: Leaning left | +180: Leaning right
         float yaw = player.getLocation().getYaw();
-        //Bring to 360 degrees (Clockwise from -X axis)
+        // Bring to 360 degrees (Clockwise from -X axis)
         if (yaw < 0.0F) {
             yaw += 360.0F;
         }
-        //Separate into 8 sectors (Arc: 45deg), offset by 1/2 sector (Arc: 22.5deg)
+        // Separate into 8 sectors (Arc: 45deg), offset by 1/2 sector (Arc: 22.5deg)
         int sector = (int) ((yaw + 22.5F) / 45F);
         switch (sector) {
             case 1: return "SW";
@@ -341,7 +343,7 @@ public class Util {
             case 6: return "E [+X]";
             case 7: return "SE";
             case 0:
-            default: //Example: (359 + 22.5)/45
+            default: // Example: (359 + 22.5)/45
                 return "S [+Z]";
         }
     }
@@ -365,12 +367,12 @@ public class Util {
      * @return Small message indicating updated state.
      */
     static boolean setMessageUpdateDelay(CommandSender sender, String[] args, int argStart) {
-        //No number given
+        // No number given
         if (args.length < argStart + 1) {
             sendMsg(sender, "Message update delay is currently: "
                     + Util.HLT + Util.getMessageUpdateDelay() + " ticks.");
         }
-        //Number was given
+        // Number was given
         else {
             try {
                 long newDelay = Long.parseLong(args[argStart]);
@@ -381,13 +383,13 @@ public class Util {
                 }
                 messageUpdateDelay = newDelay;
 
-                //Save the new value.
-                InfoHUD.instance.getConfig().set(MESSAGE_UPDATE_DELAY_PATH, messageUpdateDelay);
-                InfoHUD.instance.saveConfig();
+                // Save the new value.
+                DefinedHUD.instance.getConfig().set(MESSAGE_UPDATE_DELAY_PATH, messageUpdateDelay);
+                DefinedHUD.instance.saveConfig();
 
-                //Stop plugin and restart with new refresh period.
-                InfoHUD.instance.msgSenderTask.cancel();
-                InfoHUD.instance.msgSenderTask = InfoHUD.instance.startMessageUpdaterTask(getMessageUpdateDelay());
+                // Stop plugin and restart with new refresh period.
+                DefinedHUD.instance.msgSenderTask.cancel();
+                DefinedHUD.instance.msgSenderTask = DefinedHUD.instance.startMessageUpdaterTask(getMessageUpdateDelay());
 
                 sendMsg(sender, "Message update delay set to " + HLT + newDelay + RES + ".");
 
@@ -403,10 +405,10 @@ public class Util {
     static boolean reload(CommandSender sender) {
         boolean success;
         try {
-            //Cancel task, reload config, and restart task.
-            InfoHUD.instance.msgSenderTask.cancel();
+            // Cancel task, reload config, and restart task.
+            DefinedHUD.instance.msgSenderTask.cancel();
             success = loadConfig();
-            InfoHUD.instance.msgSenderTask = InfoHUD.instance.startMessageUpdaterTask(getMessageUpdateDelay());
+            DefinedHUD.instance.msgSenderTask = DefinedHUD.instance.startMessageUpdaterTask(getMessageUpdateDelay());
 
             if (success) {
                 sendMsg(sender, Util.GRN + "Reloaded successfully.");
@@ -432,7 +434,7 @@ public class Util {
      * @return Small message indicating status.
      */
     static boolean getBenchmark(CommandSender sender) {
-        sendMsg(sender, "InfoHUD took " + Util.HLT + String.format("%.3f", Util.benchmark / (1000000D)) + Util.RES
+        sendMsg(sender, "DefinedHUD took " + Util.HLT + String.format("%.3f", Util.benchmark / (1000000D)) + Util.RES
                 + " ms (" + Util.HLT + String.format("%.2f", (Util.benchmark / (10000D)) / 50D)
                 + Util.RES + " % tick) during the last update.");
         return true;
@@ -440,6 +442,6 @@ public class Util {
 
     /** Send chat message to command sender. */
     static void sendMsg(CommandSender sender, String msg) {
-        sender.sendMessage(SIGN + "[InfoHUD] " + RES + msg);
+        sender.sendMessage(SIGN + "[DefinedHUD] " + RES + msg);
     }
 }

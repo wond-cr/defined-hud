@@ -1,4 +1,4 @@
-package com.roverisadog.infohud.command;
+package cn.rommy.dhud.command;
 
 import org.bukkit.entity.Player;
 
@@ -59,11 +59,11 @@ public enum TimeMode {
     /**
      * @param player Player to check.
      * @return Local time of the player, in HH:mm
-     * @see <a href="https://minecraft.gamepedia.com/Daylight_cycle">Daylight Cycle</a>
+     * @see <a href="https:// minecraft.gamepedia.com/Daylight_cycle">Daylight Cycle</a>
      */
     public static String getTime24(Player player) {
         long time = player.getWorld().getTime();
-        //MC day starts at 6:00: https://minecraft.gamepedia.com/Daylight_cycle
+        // MC day starts at 6:00: https:// minecraft.gamepedia.com/Daylight_cycle
         String timeH = Long.toString((time / 1000L + 6L) % 24L);
         String timeM = String.format("%02d", time % 1000L * 60L / 1000L);
         return timeH + ":" + timeM;
@@ -72,11 +72,11 @@ public enum TimeMode {
     /**
      * @param player Player to check.
      * @return Local time of the player, in hh:mm HH
-     * @see <a href="https://minecraft.gamepedia.com/Daylight_cycle">Daylight Cycle</a>
+     * @see <a href="https:// minecraft.gamepedia.com/Daylight_cycle">Daylight Cycle</a>
      */
     public static String getTime12(Player player, String col1, String col2) {
         long time = player.getWorld().getTime();
-        //MC day starts at 6:00
+        // MC day starts at 6:00
         boolean isPM = false;
         long currentHour = (time / 1000L + 6L) % 24L;
         if (currentHour > 12) {
@@ -94,31 +94,31 @@ public enum TimeMode {
      * @param player Player to check.
      * @param col1 Main display color.
      * @param col2 Secondary display color.
-     * @see <a href="https://minecraft.gamepedia.com/Villager#Schedules">Villager schedule</a>
+     * @see <a href="https:// minecraft.gamepedia.com/Villager#Schedules">Villager schedule</a>
      */
     public static String getVillagerTime(Player player, String col1, String col2) {
         long time = player.getWorld().getTime();
-        //Sleeping 12000 - 0
+        // Sleeping 12000 - 0
         if (time > 12000L) {
             long remaining = 12000L - time + 12000L;
             return col1 + "Sleep: " + col2 + remaining / 1200L + ":" + String.format("%02d", remaining % 1200L / 20L);
         }
-        //Wandering 11000 - 12000
+        // Wandering 11000 - 12000
         else if (time > 11000L) {
             long remaining = 1000L - time + 11000L;
             return col1 + "Wander: " + col2 + 0 + ":" + String.format("%02d", remaining % 1200L / 20L);
         }
-        //Gathering 9000 - 11000
+        // Gathering 9000 - 11000
         else if (time > 9000L) {
             long remaining = 2000L - time + 9000L;
             return col1 + "Gather: " + col2 + remaining / 1200L + ":" + String.format("%02d", remaining % 1200L / 20L);
         }
-        //Working 2000 - 9000
+        // Working 2000 - 9000
         else if (time > 2000L) {
             long remaining = 7000L - time + 2000L;
             return col1 + "Work: " + col2 + remaining / 1200L + ":" + String.format("%02d", remaining % 1200L / 20L);
         }
-        //Wandering 0 - 2000
+        // Wandering 0 - 2000
         else {
             long remaining = 2000L - time;
             return col1 + "Wander: " + col2 + remaining / 1200L + ":" + String.format("%02d", remaining % 1200L / 20L);
